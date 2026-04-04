@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>🇯🇵 Japanese Studies</title>
+<style>
+:root{--bg:#111;--card:#1c1c1e;--card2:#242426;--border:#2c2c2e;--text:#f0f0f0;--muted:#888;--app:#f97316;--guru:#a855f7;--master:#3b82f6;--enl:#06b6d4;--burn:#22c55e;--reading:#f59e0b;--listening:#6366f1;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+.hero{background:linear-gradient(to bottom,#1a0a2e,#111);padding:24px 24px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.hero h1{font-size:22px;font-weight:800;letter-spacing:-.5px;}
+.hero .date{color:var(--muted);font-size:12px;margin-top:2px;}
+.level-pill{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-size:13px;font-weight:700;padding:6px 16px;border-radius:20px;}
+.sync-bar{background:#1a1a2e;border-bottom:1px solid var(--border);padding:8px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.sync-bar label{font-size:12px;color:var(--muted);white-space:nowrap;}
+.api-input{flex:1;min-width:180px;max-width:320px;background:#111;border:1px solid var(--border);border-radius:8px;color:#fff;font-size:12px;padding:6px 10px;font-family:monospace;}
+.api-input:focus{outline:none;border-color:#555;}
+.sync-btn{background:linear-gradient(135deg,#f97316,#ea580c);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;}
+.sync-btn:hover{opacity:.85;}.sync-btn:disabled{opacity:.4;cursor:not-allowed;}
+.sync-st{font-size:11px;color:var(--muted);}.sync-st.ok{color:#22c55e;}.sync-st.err{color:#f87171;}
+.toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:#22c55e;color:#000;font-size:12px;font-weight:700;padding:5px 16px;border-radius:20px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;}
+.toast.show{opacity:1;}
+.main{padding:14px 24px;display:flex;flex-direction:column;gap:12px;max-width:1400px;}
+.row{display:grid;gap:12px;}.col2{grid-template-columns:1fr 1fr;}.col3{grid-template-columns:1fr 1fr 1fr;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;overflow:hidden;}
+.card-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;}
+.card-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.card-title-row .card-title{margin-bottom:0;}
+/* STREAKS */
+.streak-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.streak-num{font-size:20px;font-weight:800;}
+.streak-num span{font-size:11px;font-weight:400;color:var(--muted);margin-left:4px;}
+.streak-best{font-size:11px;color:var(--muted);margin-top:1px;}
+.week-bar-bg{background:var(--card2);border-radius:3px;height:4px;margin-top:5px;overflow:hidden;}
+.week-bar-fill{height:100%;border-radius:3px;transition:width .5s;}
+.week-lbl{font-size:10px;color:var(--muted);margin-top:3px;}
+.goal-input{width:34px;background:#111;border:1px solid var(--border);border-radius:4px;color:#fff;font-size:11px;padding:2px 4px;text-align:center;}
+.goal-input:focus{outline:none;border-color:#555;}
+.grid-outer{display:flex;align-items:flex-start;margin-top:8px;}
+.day-col{display:grid;grid-template-rows:repeat(7,12px);gap:3px;margin-right:5px;flex-shrink:0;}
+.day-lbl{font-size:9px;color:var(--muted);line-height:12px;text-align:right;width:22px;}
+.grid-wrap{overflow:hidden;flex:1;min-width:0;}
+.hgrid{display:grid;grid-template-rows:repeat(7,12px);grid-auto-flow:column;gap:3px;width:fit-content;}
+.cell{width:12px;height:12px;border-radius:2px;cursor:pointer;transition:transform .1s;}
+.cell:hover{transform:scale(1.4);z-index:1;}
+.cell.r{background:var(--reading);}.cell.l{background:var(--listening);}
+.cell.e{background:var(--card2);}.cell.tod{box-shadow:0 0 0 2px #fff;}
+.cell.fut{background:var(--bg);opacity:.3;cursor:default;}
+/* STUDY TIME */
+.study-row{display:flex;gap:16px;align-items:flex-end;}
+.today-mins-wrap{flex-shrink:0;}
+.today-mins-wrap label{display:block;font-size:10px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;}
+.mins-input{width:72px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:#fff;font-size:22px;font-weight:800;padding:6px 8px;text-align:center;}
+.mins-input:focus{outline:none;border-color:#555;}
+.time-bars{flex:1;display:flex;align-items:flex-end;gap:3px;height:52px;}
+.tbar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.tbar{width:100%;border-radius:3px 3px 0 0;min-height:3px;transition:height .4s;}
+.tbar-lbl{font-size:8px;color:var(--muted);}
+/* BOOK SLIDER */
+.reading-diary-row{display:grid;grid-template-columns:1fr 196px;gap:12px;align-items:start;}
+.book-slider{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;scroll-snap-type:x mandatory;}
+.book-slider::-webkit-scrollbar{height:3px;}
+.book-slider::-webkit-scrollbar-thumb{background:#444;border-radius:2px;}
+.bcard{flex-shrink:0;width:110px;background:var(--card2);border-radius:10px;overflow:hidden;border:1px solid var(--border);scroll-snap-align:start;transition:transform .15s;cursor:pointer;}
+.bcard:hover{transform:translateY(-2px);}
+.bcover{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;}
+.bph{width:100%;aspect-ratio:2/3;background:linear-gradient(135deg,#2a2a2e,#3a3a3e);display:flex;align-items:center;justify-content:center;font-size:24px;}
+.binfo{padding:6px;}
+.btitle{font-size:10px;font-weight:600;line-height:1.3;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.btype{font-size:9px;color:var(--muted);}
+.bdiff{display:inline-block;font-size:9px;font-weight:700;padding:2px 5px;border-radius:4px;margin-top:3px;background:rgba(99,102,241,.2);color:#818cf8;}
+.bprog-bg{height:3px;background:var(--card2);margin-top:2px;}
+.bprog-fill{height:100%;background:linear-gradient(90deg,#6366f1,#a855f7);transition:width .3s;}
+.bprog-lbl{font-size:8px;color:var(--muted);text-align:right;padding:1px 6px 4px;}
+.fin-btn{width:100%;background:rgba(34,197,94,.15);color:#22c55e;border:none;border-top:1px solid var(--border);padding:5px;font-size:10px;font-weight:700;cursor:pointer;}
+.fin-btn:hover{background:rgba(34,197,94,.3);}
+.add-bcard{flex-shrink:0;width:110px;background:var(--card2);border:2px dashed var(--border);border-radius:10px;aspect-ratio:2/3;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:10px;gap:5px;scroll-snap-align:start;}
+.add-bcard:hover{border-color:#555;color:#aaa;}
+/* MINI CALENDAR */
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.cal-nav button{background:transparent;border:none;color:var(--muted);font-size:15px;cursor:pointer;padding:0 4px;}
+.cal-nav button:hover{color:var(--text);}
+.cal-month{font-size:12px;font-weight:700;}.cal-year{color:#6366f1;}
+.cal-dows{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;margin-bottom:2px;}
+.cal-dow{font-size:8px;color:var(--muted);text-align:center;font-weight:600;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;}
+.cday{aspect-ratio:1;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;cursor:pointer;position:relative;color:var(--muted);border:1px solid transparent;}
+.cday.in-month{color:var(--text);}.cday.in-month:hover{background:var(--card2);}
+.cday.has-note{background:rgba(99,102,241,.2);border-color:rgba(99,102,241,.4);color:#a5b4fc;font-weight:700;}
+.cday.is-today{border-color:#fff !important;font-weight:700;color:#fff;}
+.cday.blank{cursor:default;visibility:hidden;}
+.ndot{position:absolute;bottom:1px;left:50%;transform:translateX(-50%);width:3px;height:3px;border-radius:50%;background:#6366f1;}
+/* RIBBON */
+.year-tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
+.year-tab{background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;cursor:pointer;color:var(--muted);}
+.year-tab.active{background:#6366f1;border-color:#6366f1;color:#fff;}
+.ribbon{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;}
+.ribbon::-webkit-scrollbar{height:3px;}
+.ribbon::-webkit-scrollbar-thumb{background:#444;border-radius:2px;}
+.rbook{flex-shrink:0;width:70px;}
+.rbook img,.rbook .rph{width:70px;height:105px;object-fit:cover;border-radius:6px;display:block;}
+.rbook .rph{background:linear-gradient(135deg,#2a2a2e,#3a3a3e);display:flex;align-items:center;justify-content:center;font-size:20px;}
+.rbook-title{font-size:9px;color:var(--muted);margin-top:3px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rbook-sub{font-size:8px;color:#555;text-align:center;}
+.ribbon-empty{color:var(--muted);font-size:12px;padding:6px 0;}
+/* WK */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.stat-b{background:var(--card2);border-radius:10px;padding:10px;text-align:center;}
+.stat-b .val{font-size:26px;font-weight:800;line-height:1;}
+.stat-b .lbl{font-size:9px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.5px;}
+.stat-b .sub{font-size:10px;color:#666;margin-top:2px;}
+.last-sync{font-size:10px;color:var(--muted);margin-top:8px;text-align:right;}
+.srs-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.srs-pill{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:8px;font-size:11px;font-weight:600;}
+.srs-pill .cnt{font-size:16px;font-weight:800;}
+.p-app{background:rgba(249,115,22,.15);color:var(--app);}.p-guru{background:rgba(168,85,247,.15);color:var(--guru);}
+.p-master{background:rgba(59,130,246,.15);color:var(--master);}.p-enl{background:rgba(6,182,212,.15);color:var(--enl);}
+.p-burn{background:rgba(34,197,94,.15);color:var(--burn);grid-column:span 2;}
+.wk-kanji-wrap{display:flex;align-items:center;gap:14px;}
+.wk-ring-wrap{position:relative;width:80px;height:80px;flex-shrink:0;}
+.wk-ring{width:80px;height:80px;}
+.wk-ring-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.wk-ring-pct{font-size:15px;font-weight:800;color:#a855f7;}
+.wk-ring-sub{font-size:9px;color:var(--muted);}
+.wk-kanji-stats{display:flex;flex-direction:column;gap:7px;flex:1;}
+.wk-kstat{display:flex;align-items:baseline;gap:6px;}
+.wk-kval{font-size:20px;font-weight:800;}
+.wk-klbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;}
+.bar-bg{background:var(--card2);border-radius:3px;height:5px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:3px;transition:width 1s ease;}
+/* FAB + PANEL */
+.fab{position:fixed;right:18px;bottom:18px;z-index:200;background:#6366f1;color:#fff;border:none;border-radius:50%;width:44px;height:44px;font-size:17px;cursor:pointer;box-shadow:0 4px 18px rgba(99,102,241,.5);}
+.fab:hover{transform:scale(1.1);}
+.panel{position:fixed;right:0;top:0;bottom:0;width:300px;background:#1a1a1e;border-left:1px solid var(--border);padding:18px;overflow-y:auto;z-index:100;transform:translateX(100%);transition:transform .3s ease;}
+.panel.open{transform:translateX(0);}
+.panel h2{font-size:14px;font-weight:700;margin-bottom:5px;}
+.panel p{font-size:11px;color:var(--muted);margin-bottom:12px;}
+.fg{margin-bottom:12px;}
+.fg label{display:block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:4px;}
+.fg input,.fg select{width:100%;background:#111;border:1px solid var(--border);border-radius:8px;color:#fff;font-size:13px;padding:7px 10px;}
+.fg input:focus{outline:none;border-color:#555;}
+.srs-g{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.srs-i label{color:var(--muted);font-size:10px;}
+.btn{width:100%;padding:8px;border-radius:8px;border:none;cursor:pointer;font-size:12px;font-weight:600;margin-top:6px;}
+.bp{background:#6366f1;color:#fff;}.bp:hover{background:#4f46e5;}
+.bs{background:var(--card2);color:#aaa;}.bd{background:rgba(239,68,68,.15);color:#f87171;}
+/* OVERLAYS */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:300;align-items:center;justify-content:center;}
+.ov.open{display:flex;}
+.modal{background:#1c1c1e;border:1px solid var(--border);border-radius:16px;padding:20px;width:360px;max-width:95vw;max-height:90vh;overflow-y:auto;}
+.modal h3{font-size:14px;font-weight:700;margin-bottom:14px;}
+.mbtns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.mbtns .btn{margin-top:0;flex:1;}
+.cover-row{display:flex;gap:6px;}
+.cover-row input{flex:1;}
+.fetch-btn{background:#6366f1;color:#fff;border:none;border-radius:8px;padding:0 12px;cursor:pointer;font-size:11px;white-space:nowrap;font-weight:600;}
+.fetch-btn:hover{background:#4f46e5;}
+.upload-lbl{display:block;margin-top:6px;background:var(--card2);border:1px dashed var(--border);border-radius:8px;padding:7px 10px;font-size:11px;color:var(--muted);cursor:pointer;text-align:center;}
+.upload-lbl:hover{border-color:#555;color:#aaa;}
+.cover-prev{margin-top:8px;display:none;align-items:center;gap:10px;}
+.cover-prev img{height:72px;border-radius:6px;border:1px solid var(--border);}
+.cover-prev-st{font-size:11px;color:var(--muted);}
+.prog-row{display:flex;gap:8px;align-items:center;}
+.prog-row input{flex:1;}
+.prog-sep{color:var(--muted);font-size:12px;}
+/* FULL PAGE DIARY */
+.diary-page{display:none;position:fixed;inset:0;background:var(--bg);z-index:500;flex-direction:column;}
+.diary-page.open{display:flex;}
+.diary-ph{background:#1a1a2e;border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:12px;}
+.back-btn{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 14px;cursor:pointer;font-size:13px;font-weight:600;}
+.back-btn:hover{background:#333;}
+.diary-ph-date{font-size:15px;font-weight:700;flex:1;}
+.diary-ph-actions{display:flex;gap:8px;}
+.dsave{background:#6366f1;color:#fff;border:none;border-radius:8px;padding:6px 16px;font-size:13px;font-weight:700;cursor:pointer;}
+.ddel{background:rgba(239,68,68,.15);color:#f87171;border:none;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer;}
+.diary-body{flex:1;display:flex;flex-direction:column;padding:16px 20px;gap:10px;overflow-y:auto;}
+.diary-ta{flex:1;min-height:200px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:14px;padding:14px;resize:none;line-height:1.65;}
+.diary-ta:focus{outline:none;border-color:#555;}
+.embed-bar{display:flex;gap:8px;align-items:center;}
+.embed-bar label{font-size:11px;color:var(--muted);white-space:nowrap;}
+.embed-input{flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;color:#fff;font-size:12px;padding:6px 10px;}
+.embed-input:focus{outline:none;border-color:#555;}
+.embed-add{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;}
+.embeds{display:flex;flex-direction:column;gap:8px;}
+.embed-item{position:relative;background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.embed-item iframe{width:100%;height:280px;border:none;display:block;}
+.embed-item img{max-width:100%;display:block;}
+.embed-rm{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.7);color:#fff;border:none;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:11px;}
+@media(max-width:800px){.reading-diary-row{grid-template-columns:1fr;}.col2,.col3{grid-template-columns:1fr;}.main{padding:10px 12px;}}
+</style>
+</head>
+<body>
+<div class="toast" id="toast">✓ Saved</div>
+<div class="hero">
+  <div><h1>🇯🇵 Japanese Studies</h1><div class="date" id="todayDate"></div></div>
+  <div class="level-pill">Level <span id="hLevel">—</span></div>
+</div>
+<div class="sync-bar">
+  <label>WaniKani API Key</label>
+  <input class="api-input" type="password" id="apiKey" placeholder="Paste once — saved locally"/>
+  <button class="sync-btn" id="syncBtn" onclick="syncWK()">⚡ Sync WaniKani</button>
+  <span class="sync-st" id="syncSt"></span>
+</div>
+<div class="main">
+  <!-- STREAKS -->
+  <div class="row col2">
+    <div class="card">
+      <div class="card-title-row">
+        <span class="card-title" style="margin-bottom:0">📚 Reading Streak</span>
+        <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted)">Goal <input type="number" class="goal-input" id="rGoal" min="1" max="7" value="5" onchange="saveGoals()"/> /wk</span>
+      </div>
+      <div class="streak-hdr">
+        <div><div class="streak-num" id="rStr" style="color:var(--reading)">0 <span>day streak</span></div><div class="streak-best" id="rBst">Best: 0 days</div></div>
+        <div style="font-size:24px">📖</div>
+      </div>
+      <div class="week-bar-bg"><div class="week-bar-fill" id="rWeekFill" style="width:0%;background:linear-gradient(90deg,var(--reading),#f97316)"></div></div>
+      <div class="week-lbl" id="rWeekLbl">0/5 this week</div>
+      <div class="grid-outer">
+        <div class="day-col"><div class="day-lbl">Mon</div><div class="day-lbl">Tue</div><div class="day-lbl">Wed</div><div class="day-lbl">Thu</div><div class="day-lbl">Fri</div><div class="day-lbl">Sat</div><div class="day-lbl">Sun</div></div>
+        <div class="grid-wrap"><div class="hgrid" id="rGrid"></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title-row">
+        <span class="card-title" style="margin-bottom:0">🎧 Listening Streak</span>
+        <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted)">Goal <input type="number" class="goal-input" id="lGoal" min="1" max="7" value="5" onchange="saveGoals()"/> /wk</span>
+      </div>
+      <div class="streak-hdr">
+        <div><div class="streak-num" id="lStr" style="color:var(--listening)">0 <span>day streak</span></div><div class="streak-best" id="lBst">Best: 0 days</div></div>
+        <div style="font-size:24px">🎧</div>
+      </div>
+      <div class="week-bar-bg"><div class="week-bar-fill" id="lWeekFill" style="width:0%;background:linear-gradient(90deg,var(--listening),#818cf8)"></div></div>
+      <div class="week-lbl" id="lWeekLbl">0/5 this week</div>
+      <div class="grid-outer">
+        <div class="day-col"><div class="day-lbl">Mon</div><div class="day-lbl">Tue</div><div class="day-lbl">Wed</div><div class="day-lbl">Thu</div><div class="day-lbl">Fri</div><div class="day-lbl">Sat</div><div class="day-lbl">Sun</div></div>
+        <div class="grid-wrap"><div class="hgrid" id="lGrid"></div></div>
+      </div>
+    </div>
+  </div>
+  <!-- CURRENTLY READING + DIARY -->
+  <div class="reading-diary-row">
+    <div class="card">
+      <div class="card-title">📖 Currently Reading</div>
+      <div class="book-slider" id="bookSlider"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📓 Study Diary</div>
+      <div class="cal-nav">
+        <button onclick="dPrev()">‹</button>
+        <span class="cal-month" id="calLbl"></span>
+        <button onclick="dNext()">›</button>
+      </div>
+      <div class="cal-dows" id="calDows"></div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+  </div>
+  <!-- BOOKS READ -->
+  <div class="card">
+    <div class="card-title">📚 Books Read</div>
+    <div class="year-tabs" id="yearTabs"></div>
+    <div class="ribbon" id="ribbon"></div>
+  </div>
+  <!-- WK ROW -->
+  <div class="row col3">
+    <div class="card">
+      <div class="card-title">⚡ WaniKani</div>
+      <div class="stat-grid">
+        <div class="stat-b"><div class="val" id="sLv">—</div><div class="lbl">Level</div></div>
+        <div class="stat-b"><div class="val" style="color:#f59e0b" id="sRv">—</div><div class="lbl">Reviews</div><div class="sub">available</div></div>
+        <div class="stat-b"><div class="val" style="color:#6366f1" id="sLs">—</div><div class="lbl">Lessons</div><div class="sub">available</div></div>
+      </div>
+      <div class="last-sync" id="lastSync"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🔵 SRS Breakdown</div>
+      <div class="srs-grid">
+        <div class="srs-pill p-app"><span>Apprentice</span><span class="cnt" id="sApp">0</span></div>
+        <div class="srs-pill p-guru"><span>Guru</span><span class="cnt" id="sGuru">0</span></div>
+        <div class="srs-pill p-master"><span>Master</span><span class="cnt" id="sMaster">0</span></div>
+        <div class="srs-pill p-enl"><span>Enlightened</span><span class="cnt" id="sEnl">0</span></div>
+        <div class="srs-pill p-burn"><span>🔥 Burned</span><span class="cnt" id="sBurn">0</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">⚡ WK Kanji Progress</div>
+      <div class="wk-kanji-wrap">
+        <div class="wk-ring-wrap">
+          <svg viewBox="0 0 80 80" class="wk-ring">
+            <circle cx="40" cy="40" r="34" fill="none" stroke="var(--card2)" stroke-width="8"/>
+            <circle cx="40" cy="40" r="34" fill="none" stroke="#a855f7" stroke-width="8" stroke-linecap="round"
+              id="wkRingFill" style="transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset 1s ease;"
+              stroke-dasharray="213.6" stroke-dashoffset="213.6"/>
+          </svg>
+          <div class="wk-ring-label"><div class="wk-ring-pct" id="wkPct">0%</div><div class="wk-ring-sub">Guru+</div></div>
+        </div>
+        <div class="wk-kanji-stats">
+          <div class="wk-kstat"><span class="wk-kval" id="wkKnown" style="color:#a855f7">0</span><span class="wk-klbl">Known</span></div>
+          <div class="wk-kstat"><span class="wk-kval" id="wkLeft" style="color:var(--muted)">2027</span><span class="wk-klbl">Left</span></div>
+          <div class="wk-kstat"><span class="wk-kval" style="color:#444">2027</span><span class="wk-klbl">Total</span></div>
+        </div>
+      </div>
+      <div class="bar-bg" style="margin-top:10px"><div class="bar-fill" id="wkBar" style="width:0%;background:linear-gradient(90deg,#a855f7,#6366f1)"></div></div>
+    </div>
+  </div>
+</div>
+<!-- FULL PAGE DIARY -->
+<div class="diary-page" id="diaryPage">
+  <div class="diary-ph">
+    <button class="back-btn" onclick="closeDiary()">← Back</button>
+    <div class="diary-ph-date" id="dpDate"></div>
+    <div class="diary-ph-actions">
+      <button class="ddel" onclick="delNote()">Delete</button>
+      <button class="dsave" onclick="saveNote()">Save</button>
+    </div>
+  </div>
+  <div class="diary-body">
+    <textarea class="diary-ta" id="diaryNote" placeholder="What did you study today?"></textarea>
+    <div class="embed-bar">
+      <label>Embed URL:</label>
+      <input class="embed-input" id="embedUrl" placeholder="YouTube link or image URL"/>
+      <button class="embed-add" onclick="addEmbed()">+ Add</button>
+    </div>
+    <div class="embeds" id="diaryEmbeds"></div>
+  </div>
+</div>
+<button class="fab" onclick="togglePanel()">✏️</button>
+<!-- PANEL -->
+<div class="panel" id="panel">
+  <h2>✏️ Manual Override</h2>
+  <p>Set WaniKani stats manually.</p>
+  <div class="fg"><label>Level</label><input type="number" id="eLevel" min="1" max="60"/></div>
+  <div class="fg"><label>Reviews Available</label><input type="number" id="eReviews" min="0"/></div>
+  <div class="fg"><label>Lessons Available</label><input type="number" id="eLessons" min="0"/></div>
+  <div class="fg"><label>SRS Counts</label>
+    <div class="srs-g">
+      <div class="srs-i"><label style="color:var(--app)">Apprentice</label><input type="number" id="eApp" min="0"/></div>
+      <div class="srs-i"><label style="color:var(--guru)">Guru</label><input type="number" id="eGuru" min="0"/></div>
+      <div class="srs-i"><label style="color:var(--master)">Master</label><input type="number" id="eMaster" min="0"/></div>
+      <div class="srs-i"><label style="color:var(--enl)">Enlightened</label><input type="number" id="eEnl" min="0"/></div>
+      <div class="srs-i" style="grid-column:span 2"><label style="color:var(--burn)">Burned</label><input type="number" id="eBurn" min="0"/></div>
+    </div>
+  </div>
+  <button class="btn bp" onclick="applyManual()">Apply & Save</button>
+  <button class="btn bs" onclick="togglePanel()">Close</button>
+  <hr style="border-color:var(--border);margin:14px 0"/>
+  <button class="btn bd" onclick="resetAll()">⚠️ Reset All Data</button>
+</div>
+<!-- ADD BOOK MODAL -->
+<div class="ov" id="bookOv">
+  <div class="modal">
+    <h3>Add Book / Manga</h3>
+    <div class="fg"><label>Title</label><input type="text" id="mTitle" placeholder="e.g. よつばと！"/></div>
+    <div class="fg"><label>Type</label>
+      <select id="mType"><option value="manga">Manga</option><option value="novel">Novel</option><option value="lightnovel">Light Novel</option><option value="nonfiction">Non-fiction</option><option value="childrens">Children's Book</option></select>
+    </div>
+    <div class="fg"><label>Cover Image</label>
+      <div class="cover-row"><input type="text" id="mCover" placeholder="ISBN / ASIN / https://..."/><button class="fetch-btn" onclick="doLookup('m')">Look up</button></div>
+      <label class="upload-lbl" onclick="document.getElementById('mFile').click()">📁 Upload image from computer</label>
+      <input type="file" id="mFile" accept="image/*" style="display:none" onchange="handleUpload('m',this)"/>
+      <div class="cover-prev" id="mCoverPrev"><img id="mCoverImg" src="" alt=""/><span class="cover-prev-st" id="mCoverSt"></span></div>
+    </div>
+    <div class="fg"><label>Difficulty</label>
+      <select id="mDiff"><option>1 - Very Easy</option><option>2 - Easy</option><option selected>3 - Medium</option><option>4 - Hard</option><option>5 - Very Hard</option></select>
+    </div>
+    <div class="fg"><label>Progress (current page / total pages)</label>
+      <div class="prog-row"><input type="number" id="mCurPage" min="0" placeholder="0"/><span class="prog-sep">/</span><input type="number" id="mTotPage" min="0" placeholder="total (auto-fetched)"/></div>
+    </div>
+    <div class="fg"><label>Start Date</label><input type="date" id="mStartDate"/></div>
+    <div class="mbtns">
+      <button class="btn bp" onclick="saveBook()">Add</button>
+      <button class="btn bs" onclick="closeBookModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+<!-- EDIT BOOK MODAL -->
+<div class="ov" id="editOv">
+  <div class="modal">
+    <h3>Edit Book</h3>
+    <div class="fg"><label>Title</label><input type="text" id="eTitle"/></div>
+    <div class="fg"><label>Type</label>
+      <select id="eType"><option value="manga">Manga</option><option value="novel">Novel</option><option value="lightnovel">Light Novel</option><option value="nonfiction">Non-fiction</option><option value="childrens">Children's Book</option></select>
+    </div>
+    <div class="fg"><label>Cover Image</label>
+      <div class="cover-row"><input type="text" id="eCover" placeholder="ISBN / ASIN / https://..."/><button class="fetch-btn" onclick="doLookup('e')">Look up</button></div>
+      <label class="upload-lbl" onclick="document.getElementById('eFile').click()">📁 Upload image from computer</label>
+      <input type="file" id="eFile" accept="image/*" style="display:none" onchange="handleUpload('e',this)"/>
+      <div class="cover-prev" id="eCoverPrev"><img id="eCoverImg" src="" alt=""/><span class="cover-prev-st" id="eCoverSt"></span></div>
+    </div>
+    <div class="fg"><label>Difficulty</label>
+      <select id="eDiff"><option>1 - Very Easy</option><option>2 - Easy</option><option>3 - Medium</option><option>4 - Hard</option><option>5 - Very Hard</option></select>
+    </div>
+    <div class="fg"><label>Progress (current page / total pages)</label>
+      <div class="prog-row"><input type="number" id="eCurPage" min="0" placeholder="0"/><span class="prog-sep">/</span><input type="number" id="eTotPage" min="0" placeholder="total (auto-fetched)"/></div>
+    </div>
+    <div class="fg"><label>Start Date</label><input type="date" id="eStartDate"/></div>
+    <div class="mbtns">
+      <button class="btn bp" onclick="updateBook()">Save Changes</button>
+      <button class="btn bd" onclick="deleteBook()">Remove</button>
+      <button class="btn bs" onclick="closeEditModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+<script>
+const SK='jp-v7',AK='jp-wk-key';
+const DEF={level:1,reviews:0,lessons:0,app:0,guru:0,master:0,enl:0,burn:0,wkKanji:0,
+  rBest:0,lBest:0,lastSynced:null,weekGoals:{r:5,l:5},
+  readingDays:{},listeningDays:{},studyMins:{},
+  currentBooks:[],finishedBooks:[],diaryNotes:{},diaryEmbeds:{}};
+
+let S=load();
+function load(){try{const d=localStorage.getItem(SK);return d?Object.assign({},DEF,JSON.parse(d)):Object.assign({},DEF);}catch(e){return Object.assign({},DEF);}}
+function save(){try{localStorage.setItem(SK,JSON.stringify(S));const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1500);}catch(e){alert('Save failed.');}}
+
+// DATES
+function key(d){return d.toISOString().slice(0,10);}
+function today(){return new Date();}
+function shift(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
+function dow(d){return(d.getDay()+6)%7;}
+
+// WK SYNC
+async function syncWK(){
+  const apiKey=document.getElementById('apiKey').value.trim();
+  if(!apiKey){setSt('Paste your API key first.','err');return;}
+  localStorage.setItem(AK,apiKey);
+  const btn=document.getElementById('syncBtn');
+  btn.disabled=true;btn.textContent='⏳ Syncing…';setSt('Connecting…','');
+  try{
+    const H={'Authorization':'Bearer '+apiKey,'Wanikani-Revision':'20170710'};
+    const uR=await fetch('https://api.wanikani.com/v2/user',{headers:H});
+    if(!uR.ok)throw new Error(uR.status===401?'Invalid API key.':'Error '+uR.status);
+    S.level=(await uR.json()).data.level;
+    const sR=await fetch('https://api.wanikani.com/v2/summary',{headers:H});
+    const sD=await sR.json();
+    const now=new Date();
+    S.lessons=sD.data.lessons.filter(b=>new Date(b.available_at)<=now).reduce((a,b)=>a+b.subject_ids.length,0);
+    S.reviews=sD.data.reviews.filter(b=>new Date(b.available_at)<=now).reduce((a,b)=>a+b.subject_ids.length,0);
+    setSt('Fetching SRS…','');
+    const srs={app:0,guru:0,master:0,enl:0,burn:0};
+    let url='https://api.wanikani.com/v2/assignments?started=true';
+    while(url){const r=await fetch(url,{headers:H});const d=await r.json();
+      for(const i of d.data){const s=i.data.srs_stage;
+        if(s>=1&&s<=4)srs.app++;else if(s>=5&&s<=6)srs.guru++;
+        else if(s===7)srs.master++;else if(s===8)srs.enl++;else if(s===9)srs.burn++;}
+      url=d.pages.next_url||null;}
+    S.app=srs.app;S.guru=srs.guru;S.master=srs.master;S.enl=srs.enl;S.burn=srs.burn;
+    setSt('Counting kanji…','');
+    let known=0,ku='https://api.wanikani.com/v2/assignments?subject_types=kanji&srs_stages=5,6,7,8,9';
+    while(ku){const r=await fetch(ku,{headers:H});const d=await r.json();known+=d.data.length;ku=d.pages.next_url||null;}
+    S.wkKanji=known;S.lastSynced=new Date().toISOString();
+    save();renderAll();setSt('✓ Synced at '+new Date().toLocaleTimeString(),'ok');
+  }catch(e){setSt('✗ '+e.message,'err');}
+  finally{btn.disabled=false;btn.textContent='⚡ Sync WaniKani';}
+}
+function setSt(m,c){const e=document.getElementById('syncSt');e.textContent=m;e.className='sync-st'+(c?' '+c:'');}
+
+// COVER LOOKUP
+function handleUpload(pfx,input){
+  const file=input.files[0];if(!file)return;
+  const prev=document.getElementById(pfx+'CoverPrev'),img=document.getElementById(pfx+'CoverImg'),st=document.getElementById(pfx+'CoverSt');
+  const fr=new FileReader();
+  fr.onload=e=>{img.src=e.target.result;prev.style.display='flex';st.textContent='✓ '+file.name;document.getElementById(pfx+'Cover').value=e.target.result;};
+  fr.readAsDataURL(file);input.value='';
+}
+async function doLookup(pfx){
+  const val=document.getElementById(pfx+'Cover').value.trim();if(!val)return;
+  const prev=document.getElementById(pfx+'CoverPrev'),img=document.getElementById(pfx+'CoverImg'),st=document.getElementById(pfx+'CoverSt'),titleEl=document.getElementById(pfx+'Title');
+  prev.style.display='flex';img.src='';st.textContent='Looking up…';
+  function tryImgSrc(url,label){
+    img.onload=()=>{st.textContent='✓ '+label;document.getElementById(pfx+'Cover').value=url;};
+    img.onerror=()=>{st.textContent='Cover blocked — use 📁 Upload instead';};
+    img.src=url;
+  }
+  if(val.startsWith('http')){tryImgSrc(val,'cover');return;}
+  if(/^B[0-9A-Z]{9}$/.test(val)){tryImgSrc('https://m.media-amazon.com/images/P/'+val+'.01._SX300_.jpg','Amazon cover');return;}
+  const isbn=val.replace(/[-\s]/g,'');
+  try{
+    st.textContent='Checking OpenBD…';
+    const res=await fetch('https://api.openbd.jp/v1/get?isbn='+isbn);
+    const data=await res.json();
+    if(data&&data[0]&&data[0].summary){
+      const s=data[0].summary;
+      if(s.title&&!titleEl.value.trim())titleEl.value=s.title;
+      // Page count from OpenBD
+      const pages=data[0].onix&&data[0].onix.DescriptiveDetail&&data[0].onix.DescriptiveDetail.Extent;
+      if(pages){const pg=Array.isArray(pages)?pages.find(e=>e.ExtentType==='11'):null;if(pg&&pg.ExtentValue){const pid=pfx+'TotPage';if(!document.getElementById(pid).value)document.getElementById(pid).value=pg.ExtentValue;}}
+      if(s.cover){tryImgSrc(s.cover,'OpenBD cover');return;}
+    }
+  }catch(e){}
+  try{
+    st.textContent='Checking Google Books…';
+    const res=await fetch('https://www.googleapis.com/books/v1/volumes?q=isbn:'+isbn+'&maxResults=1');
+    const data=await res.json();
+    if(data.items&&data.items.length){
+      const info=data.items[0].volumeInfo;
+      if(info.title&&!titleEl.value.trim())titleEl.value=info.title;
+      // Page count from Google Books
+      if(info.pageCount){const pid=pfx+'TotPage';if(!document.getElementById(pid).value)document.getElementById(pid).value=info.pageCount;}
+      const ids=info.industryIdentifiers||[];
+      const found=ids.find(x=>x.type==='ISBN_13')||ids.find(x=>x.type==='ISBN_10');
+      if(found){tryImgSrc('https://covers.openlibrary.org/b/isbn/'+found.identifier+'-L.jpg','Open Library cover');return;}
+      if(info.imageLinks&&info.imageLinks.thumbnail){tryImgSrc(info.imageLinks.thumbnail.replace('http://','https://'),'Google Books cover');return;}
+    }
+  }catch(e){}
+  st.textContent='Title fetched. Cover blocked — use 📁 Upload.';
+}
+
+// RENDERS
+function renderHeader(){document.getElementById('todayDate').textContent=today().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});}
+function renderWK(){
+  document.getElementById('sLv').textContent=S.level;document.getElementById('sRv').textContent=S.reviews;
+  document.getElementById('sLs').textContent=S.lessons;document.getElementById('hLevel').textContent=S.level;
+  document.getElementById('sApp').textContent=S.app;document.getElementById('sGuru').textContent=S.guru;
+  document.getElementById('sMaster').textContent=S.master;document.getElementById('sEnl').textContent=S.enl;document.getElementById('sBurn').textContent=S.burn;
+  document.getElementById('lastSync').textContent=S.lastSynced?'Last synced: '+new Date(S.lastSynced).toLocaleString():'Not yet synced';
+  const total=2027,known=S.wkKanji||0,pct=Math.round(known/total*100),circ=2*Math.PI*34;
+  document.getElementById('wkPct').textContent=pct+'%';document.getElementById('wkKnown').textContent=known;document.getElementById('wkLeft').textContent=total-known;
+  document.getElementById('wkRingFill').setAttribute('stroke-dasharray',circ);document.getElementById('wkRingFill').style.strokeDashoffset=circ*(1-known/total);
+  document.getElementById('wkBar').style.width=pct+'%';
+}
+function calcStr(map){
+  const t=today();let s=0,d=new Date(t);
+  while(map[key(d)]){s++;d=shift(d,-1);if(s>3650)break;}
+  let best=0,run=0;for(let i=365;i>=0;i--){map[key(shift(t,-i))]?(run++,best=Math.max(best,run)):run=0;}
+  return{s,best};
+}
+function thisWeekCounts(){
+  const t=today(),mon=shift(t,-dow(t));
+  let r=0,l=0;for(let i=0;i<7;i++){const k=key(shift(mon,i));if(S.readingDays[k])r++;if(S.listeningDays[k])l++;}
+  return{r,l};
+}
+function renderStreaks(){
+  const r=calcStr(S.readingDays),l=calcStr(S.listeningDays);
+  S.rBest=Math.max(S.rBest,r.best);S.lBest=Math.max(S.lBest,l.best);
+  document.getElementById('rStr').innerHTML=r.s+' <span>day streak</span>';document.getElementById('rBst').textContent='Best: '+S.rBest+' days';
+  document.getElementById('lStr').innerHTML=l.s+' <span>day streak</span>';document.getElementById('lBst').textContent='Best: '+S.lBest+' days';
+  const g=S.weekGoals||{r:5,l:5};
+  document.getElementById('rGoal').value=g.r||5;document.getElementById('lGoal').value=g.l||5;
+  const wk=thisWeekCounts();
+  const rp=Math.min(100,Math.round(wk.r/(g.r||5)*100)),lp=Math.min(100,Math.round(wk.l/(g.l||5)*100));
+  document.getElementById('rWeekFill').style.width=rp+'%';document.getElementById('lWeekFill').style.width=lp+'%';
+  document.getElementById('rWeekLbl').textContent=wk.r+'/'+(g.r||5)+' this week';document.getElementById('lWeekLbl').textContent=wk.l+'/'+(g.l||5)+' this week';
+}
+function saveGoals(){
+  if(!S.weekGoals)S.weekGoals={};
+  S.weekGoals.r=+document.getElementById('rGoal').value||5;S.weekGoals.l=+document.getElementById('lGoal').value||5;
+  save();renderStreaks();
+}
+function buildGrid(id,map,cls){
+  const c=document.getElementById(id);c.innerHTML='';
+  const tk=key(today()),t=today(),start=shift(t,-(10*7-1+dow(t)));
+  let d=new Date(start);
+  while(d<=t){
+    const k=key(d),fut=k>tk,cell=document.createElement('div');
+    cell.className='cell'+(fut?' fut':map[k]?' '+cls:' e');
+    if(k===tk)cell.classList.add('tod');
+    cell.title=k+(map[k]?' ✓':'');
+    if(!fut)cell.addEventListener('click',()=>{map[k]=!map[k];buildGrid(id,map,cls);renderStreaks();save();});
+    c.appendChild(cell);d=shift(d,1);
+  }
+}
+// CURRENT BOOKS
+let editIdx=-1;
+function renderCurrentBooks(){
+  const sl=document.getElementById('bookSlider');sl.innerHTML='';
+  (S.currentBooks||[]).forEach((b,i)=>{
+    const card=document.createElement('div');card.className='bcard';
+    const hasProg=b.totalPages>0,pct=hasProg?Math.min(100,Math.round((b.currentPage||0)/b.totalPages*100)):0;
+    const daysReading=b.startedDate?Math.max(1,Math.round((new Date()-new Date(b.startedDate))/(1000*60*60*24)))+'d':'';
+    const progBar=hasProg?`<div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:rgba(0,0,0,.5)"><div style="width:${pct}%;height:100%;background:linear-gradient(90deg,#6366f1,#a855f7)"></div></div><div style="position:absolute;bottom:6px;right:4px;background:rgba(0,0,0,.65);color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:3px">${pct}%</div>`:'';
+    const coverWrap=b.cover
+      ?`<div style="position:relative"><img class="bcover" src="${b.cover}" alt="${b.title}" onerror="this.style.display='none';this.nextSibling.style.display='flex'"><div class="bph" style="display:none">📚</div>${progBar}</div>`
+      :`<div style="position:relative"><div class="bph">📚</div>${progBar}</div>`;
+    card.innerHTML=`${coverWrap}<div class="binfo"><div class="btitle" title="${b.title}">${b.title}</div><div class="btype">${b.type}${daysReading?' · 📅 '+daysReading:''}</div><div class="bdiff">${b.diff}</div>${hasProg?`<div style="font-size:8px;color:var(--muted);margin-top:2px">${b.currentPage||0}/${b.totalPages} pages</div>`:''}</div><button class="fin-btn" onclick="event.stopPropagation();finishBook(${i})">✓ Finished</button>`;
+    card.addEventListener('click',(e)=>{if(!e.target.classList.contains('fin-btn'))openEdit(i);});
+    sl.appendChild(card);
+  });
+  const add=document.createElement('div');add.className='add-bcard';
+  add.innerHTML='<div style="font-size:20px">+</div><div>Add book</div>';
+  add.onclick=openBookModal;sl.appendChild(add);
+}
+function finishBook(i){
+  const b=S.currentBooks[i];
+  b.finishedDate=key(today());
+  b.startedDate=b.startedDate||b.finishedDate;
+  b.daysTaken=Math.max(1,Math.round((new Date(b.finishedDate)-new Date(b.startedDate))/(1000*60*60*24)));
+  if(!S.finishedBooks)S.finishedBooks=[];S.finishedBooks.push(b);S.currentBooks.splice(i,1);
+  save();renderCurrentBooks();renderRibbon();
+}
+function openBookModal(){
+  ['mTitle','mCover','mCurPage','mTotPage'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('mStartDate').value=key(today());
+  document.getElementById('mCoverPrev').style.display='none';
+  document.getElementById('bookOv').classList.add('open');
+}
+function closeBookModal(){document.getElementById('bookOv').classList.remove('open');}
+function saveBook(){
+  const title=document.getElementById('mTitle').value.trim();if(!title)return;
+  if(!S.currentBooks)S.currentBooks=[];
+  S.currentBooks.push({title,type:document.getElementById('mType').value,
+    cover:document.getElementById('mCover').value.trim(),diff:document.getElementById('mDiff').value,
+    currentPage:+document.getElementById('mCurPage').value||0,
+    totalPages:+document.getElementById('mTotPage').value||0,
+    startedDate:document.getElementById('mStartDate').value||key(today())});
+  save();renderCurrentBooks();closeBookModal();
+}
+function openEdit(i){
+  editIdx=i;const b=S.currentBooks[i];
+  document.getElementById('eTitle').value=b.title||'';document.getElementById('eType').value=b.type||'manga';
+  document.getElementById('eCover').value=b.cover||'';
+  document.getElementById('eCoverPrev').style.display=b.cover?'flex':'none';
+  if(b.cover){document.getElementById('eCoverImg').src=b.cover;document.getElementById('eCoverSt').textContent='Current cover';}
+  document.getElementById('eCurPage').value=b.currentPage||'';document.getElementById('eTotPage').value=b.totalPages||'';
+  document.getElementById('eStartDate').value=b.startedDate||key(today());
+  const ds=document.getElementById('eDiff');for(const o of ds.options){if(o.text===b.diff||o.value===b.diff){ds.value=o.value;break;}}
+  document.getElementById('editOv').classList.add('open');
+}
+function closeEditModal(){document.getElementById('editOv').classList.remove('open');editIdx=-1;}
+function updateBook(){
+  if(editIdx<0)return;const b=S.currentBooks[editIdx];
+  b.title=document.getElementById('eTitle').value.trim()||b.title;b.type=document.getElementById('eType').value;
+  b.cover=document.getElementById('eCover').value.trim();b.diff=document.getElementById('eDiff').value;
+  b.currentPage=+document.getElementById('eCurPage').value||0;b.totalPages=+document.getElementById('eTotPage').value||0;
+  b.startedDate=document.getElementById('eStartDate').value||b.startedDate||key(today());
+  save();renderCurrentBooks();closeEditModal();
+}
+function deleteBook(){
+  if(editIdx<0)return;
+  if(confirm('Remove "'+S.currentBooks[editIdx].title+'"?')){S.currentBooks.splice(editIdx,1);save();renderCurrentBooks();closeEditModal();}
+}
+// RIBBON
+let activeYear=today().getFullYear();
+function renderRibbon(){
+  const finished=S.finishedBooks||[];
+  const years=[...new Set(finished.map(b=>b.finishedDate?b.finishedDate.slice(0,4):null).filter(Boolean))].sort((a,b)=>b-a);
+  const curY=String(today().getFullYear());if(!years.includes(curY))years.unshift(curY);
+  const tabs=document.getElementById('yearTabs');tabs.innerHTML='';
+  years.forEach(y=>{const t=document.createElement('div');t.className='year-tab'+(String(activeYear)===y?' active':'');t.textContent=y;t.onclick=()=>{activeYear=parseInt(y);renderRibbon();};tabs.appendChild(t);});
+  const ribbon=document.getElementById('ribbon');ribbon.innerHTML='';
+  const books=finished.filter(b=>b.finishedDate&&b.finishedDate.startsWith(String(activeYear)));
+  if(!books.length){ribbon.innerHTML='<div class="ribbon-empty">No books finished in '+activeYear+' yet.</div>';return;}
+  books.forEach(b=>{
+    const div=document.createElement('div');div.className='rbook';
+    const ch=b.cover?`<img src="${b.cover}" alt="${b.title}" onerror="this.style.display='none';this.nextSibling.style.display='flex'"><div class="rph" style="display:none">📚</div>`:`<div class="rph">📚</div>`;
+    const dur=b.daysTaken?b.daysTaken+'d':(b.startedDate&&b.finishedDate?Math.max(1,Math.round((new Date(b.finishedDate)-new Date(b.startedDate))/(1000*60*60*24)))+'d':'');
+    div.innerHTML=`${ch}<div class="rbook-title">${b.title}</div><div class="rbook-sub">${b.finishedDate||''}${dur?' · '+dur:''}</div>`;
+    ribbon.appendChild(div);
+  });
+}
+// MINI CALENDAR
+let calMo=new Date();calMo.setDate(1);
+let activeDiaryKey=null;
+function renderCal(){
+  const y=calMo.getFullYear(),m=calMo.getMonth();
+  document.getElementById('calLbl').innerHTML=calMo.toLocaleDateString('en-GB',{month:'long'})+' <span class="cal-year">'+y+'</span>';
+  document.getElementById('calDows').innerHTML=['M','T','W','T','F','S','S'].map(d=>`<div class="cal-dow">${d}</div>`).join('');
+  const grid=document.getElementById('calGrid');grid.innerHTML='';
+  const first=new Date(y,m,1),offset=dow(first),dim=new Date(y,m+1,0).getDate(),tk=key(today());
+  for(let i=0;i<offset;i++){const b=document.createElement('div');b.className='cday blank';grid.appendChild(b);}
+  for(let d=1;d<=dim;d++){
+    const date=new Date(y,m,d),k=key(date),hasNote=!!(S.diaryNotes&&S.diaryNotes[k]),isToday=k===tk;
+    const div=document.createElement('div');
+    div.className='cday in-month'+(hasNote?' has-note':'')+(isToday?' is-today':'');
+    div.textContent=d;
+    if(hasNote&&!isToday){const dot=document.createElement('div');dot.className='ndot';div.appendChild(dot);}
+    div.addEventListener('click',()=>openDiary(k,date));grid.appendChild(div);
+  }
+}
+function dPrev(){calMo.setMonth(calMo.getMonth()-1);renderCal();}
+function dNext(){calMo.setMonth(calMo.getMonth()+1);renderCal();}
+// DIARY
+function openDiary(k,date){
+  activeDiaryKey=k;
+  document.getElementById('dpDate').textContent=date.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('diaryNote').value=(S.diaryNotes&&S.diaryNotes[k])||'';
+  renderEmbeds(k);document.getElementById('diaryPage').classList.add('open');
+  setTimeout(()=>document.getElementById('diaryNote').focus(),150);
+}
+function closeDiary(){document.getElementById('diaryPage').classList.remove('open');activeDiaryKey=null;}
+function saveNote(){
+  if(!activeDiaryKey)return;
+  const txt=document.getElementById('diaryNote').value.trim();
+  if(txt)S.diaryNotes[activeDiaryKey]=txt;else delete S.diaryNotes[activeDiaryKey];
+  save();renderCal();closeDiary();
+}
+function delNote(){
+  if(!activeDiaryKey)return;
+  delete S.diaryNotes[activeDiaryKey];if(S.diaryEmbeds)delete S.diaryEmbeds[activeDiaryKey];
+  save();renderCal();closeDiary();
+}
+function toEmbedUrl(raw){
+  const yt=raw.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if(yt)return{type:'iframe',url:'https://www.youtube.com/embed/'+yt[1]};
+  if(/\.(jpg|jpeg|png|gif|webp)(\?|$)/i.test(raw))return{type:'img',url:raw};
+  return{type:'iframe',url:raw};
+}
+function addEmbed(){
+  const raw=document.getElementById('embedUrl').value.trim();if(!raw||!activeDiaryKey)return;
+  if(!S.diaryEmbeds[activeDiaryKey])S.diaryEmbeds[activeDiaryKey]=[];
+  S.diaryEmbeds[activeDiaryKey].push(raw);document.getElementById('embedUrl').value='';renderEmbeds(activeDiaryKey);
+}
+function removeEmbed(k,i){S.diaryEmbeds[k].splice(i,1);renderEmbeds(k);}
+function renderEmbeds(k){
+  const c=document.getElementById('diaryEmbeds');c.innerHTML='';
+  ((S.diaryEmbeds&&S.diaryEmbeds[k])||[]).forEach((url,i)=>{
+    const wrap=document.createElement('div');wrap.className='embed-item';
+    const e=toEmbedUrl(url);
+    wrap.innerHTML=e.type==='img'?`<img src="${e.url}" alt="embed"/>`:`<iframe src="${e.url}" allowfullscreen></iframe>`;
+    const rm=document.createElement('button');rm.className='embed-rm';rm.textContent='✕';rm.onclick=()=>removeEmbed(k,i);
+    wrap.appendChild(rm);c.appendChild(wrap);
+  });
+}
+// PANEL
+function togglePanel(){
+  const p=document.getElementById('panel');p.classList.toggle('open');
+  if(p.classList.contains('open')){
+    document.getElementById('eLevel').value=S.level;document.getElementById('eReviews').value=S.reviews;
+    document.getElementById('eLessons').value=S.lessons;document.getElementById('eApp').value=S.app;
+    document.getElementById('eGuru').value=S.guru;document.getElementById('eMaster').value=S.master;
+    document.getElementById('eEnl').value=S.enl;document.getElementById('eBurn').value=S.burn;
+  }
+}
+function applyManual(){
+  S.level=+document.getElementById('eLevel').value||1;S.reviews=+document.getElementById('eReviews').value||0;
+  S.lessons=+document.getElementById('eLessons').value||0;S.app=+document.getElementById('eApp').value||0;
+  S.guru=+document.getElementById('eGuru').value||0;S.master=+document.getElementById('eMaster').value||0;
+  S.enl=+document.getElementById('eEnl').value||0;S.burn=+document.getElementById('eBurn').value||0;
+  save();renderAll();togglePanel();
+}
+function resetAll(){
+  if(confirm('Delete ALL data? This cannot be undone.')){
+    localStorage.removeItem(SK);
+    S=Object.assign({},DEF,{readingDays:{},listeningDays:{},studyMins:{},currentBooks:[],finishedBooks:[],diaryNotes:{},diaryEmbeds:{},weekGoals:{r:5,l:5}});
+    renderAll();togglePanel();
+  }
+}
+function renderAll(){
+  renderHeader();renderWK();
+  buildGrid('rGrid',S.readingDays,'r');buildGrid('lGrid',S.listeningDays,'l');
+  renderStreaks();renderCurrentBooks();renderRibbon();renderCal();
+}
+// INIT
+if(!S.currentBooks)S.currentBooks=[];if(!S.finishedBooks)S.finishedBooks=[];
+if(!S.diaryNotes)S.diaryNotes={};if(!S.diaryEmbeds)S.diaryEmbeds={};
+if(!S.studyMins)S.studyMins={};if(!S.weekGoals)S.weekGoals={r:5,l:5};
+const savedKey=localStorage.getItem(AK);
+if(savedKey)document.getElementById('apiKey').value=savedKey;
+renderAll();
+</script>
+</body>
+</html>
