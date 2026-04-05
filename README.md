@@ -1,6 +1,8 @@
-# 🇯🇵 Japanese Studies Dashboard — User Guide
+# 🇯🇵 Japanese Studies Dashboard
 
-A personal Japanese learning tracker built as a single HTML file. Tracks your WaniKani progress, reading and listening streaks, books, and study diary. Everything saves privately on your own device.
+A personal Japanese learning tracker built as a single HTML file. No account, no server, no tracking. Everything saves privately on your own device.
+
+Track your WaniKani progress, reading and listening streaks, books, and study diary — all in one dark-themed dashboard.
 
 ---
 
@@ -14,69 +16,86 @@ A personal Japanese learning tracker built as a single HTML file. Tracks your Wa
 6. [Study Diary](#study-diary)
 7. [WaniKani Stats](#wanikani-stats)
 8. [Your Data](#your-data)
+9. [Sharing with Others](#sharing-with-others)
 
 ---
 
 ## Getting Started
 
-You have three options for opening the dashboard.
-
 ### Option A — Browser (simplest)
 
-Double-click the `index.html` file. It opens in Chrome, Safari, or Firefox and works immediately. Bookmark it so you can find it easily.
+1. Download `index.html` from this repository
+2. Double-click the file — it opens in Chrome, Safari, or Firefox
+3. Bookmark it for easy access
+
+Everything works immediately with no setup.
 
 ### Option B — Obsidian
 
 1. Drop `index.html` into your Obsidian vault folder
 2. In Obsidian go to **Settings → Community Plugins → Browse**
 3. Search for **Surfing**, install it and enable it
-4. Press **Cmd+P** (Mac) or **Ctrl+P** (Windows), type **Surfing open**, and select **"Surfing: Open URL in new Surfing Tab"**
-5. In the address bar type `file://` followed by the full path to the file, for example:
+4. Press **Cmd+P** (Mac) or **Ctrl+P** (Windows)
+5. Type **Surfing open** and select **"Surfing: Open URL in new Surfing Tab"**
+6. In the address bar type `file://` followed by the full path to the file, for example:
    ```
    file:///Users/yourname/Documents/MyVault/index.html
    ```
-6. Press Enter — the dashboard opens as a tab inside Obsidian
+7. Press Enter — the dashboard opens as a tab inside Obsidian
 
-To find your exact file path on Mac: hold **Option** and right-click the file in Finder → **Copy as Pathname**.
+**Finding your file path on Mac:** Hold **Option** and right-click the file in Finder → **Copy as Pathname**, then add `file://` at the start.
 
 ### Option C — GitHub Pages (shareable link)
 
-If the file is hosted on GitHub Pages, simply open the URL you were given in any browser.
+1. Fork this repository
+2. Go to **Settings → Pages**
+3. Under **Branch**, select `main` and keep the folder as `/ (root)`
+4. Click **Save** — your dashboard will be live at `https://yourusername.github.io/repository-name` within a minute
+
+Each person who opens the link gets their own completely independent copy. Data never mixes between users.
 
 ---
 
 ## WaniKani Sync
 
-The sync bar sits at the top of the page. It pulls your level, reviews, lessons, SRS counts, and kanji progress directly from WaniKani.
+The sync bar at the top connects the dashboard to your WaniKani account.
 
-**To connect WaniKani:**
+**To connect:**
 
 1. Go to [wanikani.com](https://wanikani.com) and log in
 2. Click your profile picture → **Settings → Personal Access Tokens**
-3. Click **Generate a new token** — give it any name, read-only permissions are fine
+3. Click **Generate a new token**, give it any name, read-only permissions are fine
 4. Copy the token
 5. Paste it into the **WaniKani API Key** field in the dashboard
 6. Click **⚡ Sync WaniKani**
 
-Your API key is saved locally on your device so you only need to paste it once. Sync takes 10–30 seconds as it fetches your full assignment history. Click the button again any time you want to refresh your stats.
+Your API key is saved locally and reloads automatically — you only need to paste it once. Sync takes 10–30 seconds. Click the button any time to refresh your stats.
 
 ---
 
 ## Reading & Listening Streaks
 
-The two streak cards at the top track your daily reading and listening habits.
+Two separate cards track your daily reading and listening habits across the full year.
 
-**To log a day:**
+### Logging a day
 
-Click any square in the habit grid to mark it as done. The square turns amber (reading) or indigo (listening). Click again to unmark it. Today's square has a white border.
+Click any cell in the heatmap to mark it as done — amber for reading, indigo for listening. Click again to unmark it. Today's cell has a white outline border.
 
-**Weekly goal:**
+### Yearly heatmap
 
-Each card has a small **Goal** input in the top right. Set your target number of days per week (default is 5). A progress bar below your streak count fills up as you tick off days during the week.
+Each card shows a full GitHub-style heatmap of the entire year, with month labels across the top and Mon / Wed / Fri labels on the left. Navigate to previous years using the **‹** and **›** arrows — only years with logged data appear.
 
-**What the grid shows:**
+### Yearly summary
 
-The grid displays the last 10 weeks. Lighter squares are days you haven't logged yet. Greyed-out squares at the end are future dates.
+Each card shows **X / Y days this year** — how many days you logged out of how many days have elapsed so far. For past years, Y is the full 365 (or 366 for leap years).
+
+### Weekly goal
+
+Set a target number of days per week using the **Goal** input on each card. A progress bar fills as you tick off days during the week and resets each Monday.
+
+### Streak count
+
+Your current streak and all-time best are shown at the top of each card. Missing a day resets the current streak to zero.
 
 ---
 
@@ -86,53 +105,65 @@ A horizontal scrollable shelf of books you are currently reading.
 
 ### Adding a book
 
-Click the **+ Add book** card to open the add modal.
+Click **+ Add book** to open the modal.
 
-- **Title** — type the title, or leave it blank and use Look up to fill it automatically
-- **Type** — Manga, Novel, Light Novel, Non-fiction, or Children's Book
-- **Cover Image** — you have two options:
-  - Type an ISBN (e.g. `9784088745466`) or ASIN (e.g. `B00FXZP3LA`) and click **Look up** — the title and page count will fill in automatically, and the dashboard will attempt to load a cover
+- **Title** — type the title, or leave blank and use Look up to auto-fill it
+- **Cover Image** — two options:
+  - Type an ISBN (e.g. `9784088745466`) or ASIN (e.g. `B00FXZP3LA`) and click **Look up** — the title and total page count fill in automatically
   - Click **📁 Upload image from computer** to pick an image from your device — this is the most reliable method and stores the image locally so it always displays
-- **Difficulty** — rate it from 1 (Very Easy) to 5 (Very Hard)
-- **Progress** — enter your current page and the total pages. Total pages are fetched automatically if you use Look up with an ISBN
+- **Type** — Manga, Novel, Light Novel, Non-fiction, or Children's Book
+- **Difficulty** — 1 (Very Easy) to 5 (Very Hard)
+- **Progress** — current page and total pages (auto-filled on ISBN lookup)
 - **Start Date** — defaults to today, change it to whenever you actually started
-
-### Editing a book
-
-Click anywhere on a book card (except the Finished button) to open the edit modal. You can update any field including your current page count to track progress.
 
 ### Progress bar
 
-If you have entered a total page count, a purple progress bar appears along the bottom of the cover image with a percentage badge. Your current page and total are shown below the title.
+If you enter a total page count, a purple progress bar appears along the bottom of the cover image with a percentage badge, plus a page counter and days-reading count below the title.
+
+### Editing a book
+
+Click anywhere on a book card (not the Finished button) to open the edit modal and update any field, including your current page to track progress.
 
 ### Finishing a book
 
-Click the green **✓ Finished** button at the bottom of a book card. The book is automatically moved to the **Books Read** ribbon with today's date as the finish date. The number of days it took to read is calculated from your start date.
+Click **✓ Finished**. The book moves automatically to the Books Read ribbon with today's date recorded as the finish date, and the number of days it took is calculated from your start date.
+
+### A note on covers
+
+Obsidian blocks loading images from external websites. The most reliable method is:
+
+1. Find the book on Amazon or the publisher's site
+2. Right-click the cover image → **Save Image**
+3. In the Add or Edit modal, click **📁 Upload image from computer**
+4. Select the saved image
+
+The image is stored locally and always displays correctly, even offline. ISBNs still auto-fill the title and page count even if the cover does not load.
 
 ---
 
 ## Books Read
 
-A scrollable ribbon showing all the books you have finished, organised by year.
+A scrollable ribbon of all the books you have finished, organised by year.
 
-Click the year tabs to switch between years. Each book shows its finish date and how many days it took to read. Books appear in the order they were finished.
-
-Books are added here automatically when you click **✓ Finished** on a currently reading card.
+Click the year tabs to switch between years. Each book shows its finish date and how many days it took to read. Books are added here automatically when you tap **✓ Finished**.
 
 ---
 
 ## Study Diary
 
-A compact calendar next to the Currently Reading section. Dates with notes are highlighted in purple with a dot.
+A compact calendar sits next to the Currently Reading section. Dates with notes are highlighted in purple with a dot.
 
 ### Writing a note
 
-Click any date to open the full-page note editor. You can:
+Click any date to open the full-page note editor. Write freeform notes — what you studied, new vocabulary, grammar points, how the session felt.
 
-- Write freeform notes about what you studied, new vocabulary, grammar points, how a session felt
-- Embed YouTube videos or images by pasting a URL into the **Embed URL** field and clicking **+ Add**
+To embed a YouTube video or image, paste a URL into the **Embed URL** field and click **+ Add**. YouTube links convert to embedded players automatically.
 
-Click **Save** to save and return to the dashboard, or **← Back** to go back without saving. Click **Delete** to remove a note entirely.
+Click **Save** to save and return, **← Back** to go back without saving, or **Delete** to remove a note entirely. Press **Escape** at any time to close.
+
+### Searching notes
+
+Click the **🔍 Search** button on the diary card to search all your notes. Results appear instantly as you type, with highlighted matching snippets. Click any result to jump directly to that date.
 
 ---
 
@@ -140,42 +171,37 @@ Click **Save** to save and return to the dashboard, or **← Back** to go back w
 
 Three cards at the bottom show your WaniKani data after syncing.
 
-**WaniKani card** — shows your current level, reviews available right now, and lessons available right now. The last synced time is shown at the bottom.
+**WaniKani** — current level, reviews available right now, and lessons available right now. Last synced time shown at the bottom.
 
-**SRS Breakdown** — shows how many items are at each SRS stage: Apprentice, Guru, Master, Enlightened, and Burned.
+**SRS Breakdown** — items at each stage: Apprentice, Guru, Master, Enlightened, and Burned.
 
-**WK Kanji Progress** — a circular progress ring showing what percentage of WaniKani's 2,027 kanji you have at Guru level or above. This means you have seen them enough times to have a solid grasp. Shows known, remaining, and total counts with a progress bar.
+**WK Kanji Progress** — a circular ring showing what percentage of WaniKani's 2,027 kanji you have at Guru level or above. Shows known, remaining, and total counts with a progress bar.
 
 ---
 
 ## Your Data
 
-**Where it is stored:** All your data — streaks, notes, books, WaniKani stats — is saved in your browser's local storage. It stays on your device and is never uploaded anywhere.
+**Where it is stored** — everything saves in your browser's local storage. It stays on your device and is never sent anywhere.
 
-**Each person's data is independent:** If you share this dashboard with someone else, they get a completely blank copy. Your data and theirs never mix.
+**Each person's data is independent** — anyone you share this with gets a blank dashboard. Your data and theirs never mix.
 
-**Backing up your data:** Your data is tied to the browser and device you use. If you clear your browser data or switch devices, your data will be lost. To avoid this, periodically export your browser's local storage — or simply use the dashboard consistently on the same device.
+**Backup** — your data is tied to the browser and device you use. Clearing browser data or switching devices will lose your data. Use the dashboard consistently on the same device to avoid this.
 
-**Resetting everything:** Click the **✏️** button in the bottom right to open the manual override panel. Scroll to the bottom and click **⚠️ Reset All Data** to wipe everything and start fresh. This cannot be undone.
+**Resetting** — click the **✏️** button (bottom right) to open the manual override panel, scroll to the bottom, and click **⚠️ Reset All Data**. This cannot be undone.
 
-**Manual override:** The ✏️ panel also lets you set your WaniKani stats manually if you prefer not to use the API sync.
+**Manual override** — the ✏️ panel also lets you set WaniKani stats manually if you prefer not to use the API sync.
 
 ---
 
-## Cover Images
+## Sharing with Others
 
-Because this dashboard runs as a local file, it cannot load images from most external websites due to browser security restrictions.
+Because all data is stored locally per device, you can share `index.html` freely. Anyone who opens it gets a blank dashboard with no connection to your data.
 
-The most reliable way to add a cover is:
+The easiest ways to share:
 
-1. Go to the book's Amazon or publisher page
-2. Right-click the cover image → **Save Image**
-3. In the Add or Edit book modal, click **📁 Upload image from computer**
-4. Select the saved image
-
-The image is converted and stored locally, so it always displays correctly regardless of your internet connection.
-
-The **Look up** button will attempt to load a cover automatically from OpenBD (best for Japanese books), Google Books, or Open Library. If the cover appears in the preview, it will be saved. If it does not appear, use the upload method instead.
+- **Send the file directly** via email or message
+- **GitHub Pages** — fork this repo, enable Pages, and share the URL
+- **Netlify Drop** — drag the file to [app.netlify.com/drop](https://app.netlify.com/drop) and share the instant URL
 
 ---
 
