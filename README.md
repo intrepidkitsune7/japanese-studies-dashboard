@@ -1,208 +1,153 @@
 # 🇯🇵 Japanese Studies Dashboard
 
-A personal Japanese learning tracker built as a single HTML file. No account, no server, no tracking. Everything saves privately on your own device.
+A single-file, offline-first dashboard for tracking your Japanese reading and listening immersion. No accounts, no servers, no build step — just one HTML file you open in your browser. All your data lives locally in your browser; nothing ever leaves your machine.
 
-Track your WaniKani progress, reading and listening streaks, books, and study diary — all in one dark-themed dashboard.
-
----
-
-## Table of Contents
-
-1. [Getting Started](#getting-started)
-2. [WaniKani Sync](#wanikani-sync)
-3. [Reading & Listening Streaks](#reading--listening-streaks)
-4. [Currently Reading](#currently-reading)
-5. [Books Read](#books-read)
-6. [Study Diary](#study-diary)
-7. [WaniKani Stats](#wanikani-stats)
-8. [Your Data](#your-data)
-9. [Sharing with Others](#sharing-with-others)
+> Open `japanese-studies.html`, start logging, and watch a pixel fox cheer you on as your streak grows.
 
 ---
 
-## Getting Started
+## 📑 Table of Contents
 
-### Option A — Browser (simplest)
+- [Features](#-features)
+  - [Reading](#reading)
+  - [Listening & watching](#listening--watching)
+  - [Habit tracking](#habit-tracking)
+  - [Motivation](#motivation)
+  - [Reflection](#reflection)
+  - [WaniKani integration](#wanikani-integration)
+  - [Layout & data](#layout--data)
+- [Getting started](#-getting-started)
+  - [Optional: WaniKani sync](#optional-wanikani-sync)
+- [Using it inside Obsidian (Surfing plugin)](#-using-it-inside-obsidian-surfing-plugin)
+- [How your data works](#-how-your-data-works)
+- [Privacy](#-privacy)
+- [Technical notes](#️-technical-notes)
+- [Contributing](#-contributing)
+- [License](#-license)
 
-1. Download `index.html` from this repository
-2. Double-click the file — it opens in Chrome, Safari, or Firefox
-3. Bookmark it for easy access
+---
 
-Everything works immediately with no setup.
+## ✨ Features
 
-### Option B — Obsidian
+### Reading
+- **Currently reading shelf** with cover art, page progress bars, and per-book reading sessions. Suspend and resume books mid-read.
+- **Optional session timing** — log how long you read and the dashboard calculates a weighted "equivalent pages per hour" that accounts for the relative difficulty of manga, light novels, novels, and so on.
+- **Finished books ribbon** grouped by year, with the time each book took to finish.
+- **Favourites** — tap the heart on any finished book to mark it a favourite.
+- **Wishlist** with drag-to-reorder priority, on both desktop and touch.
+- **Reading goals** — set a yearly target and watch a progress bar fill toward it.
 
-1. Drop `index.html` into your Obsidian vault folder
-2. In Obsidian go to **Settings → Community Plugins → Browse**
-3. Search for **Surfing**, install it and enable it
-4. Press **Cmd+P** (Mac) or **Ctrl+P** (Windows)
-5. Type **Surfing open** and select **"Surfing: Open URL in new Surfing Tab"**
-6. In the address bar type `file://` followed by the full path to the file, for example:
+### Listening & watching
+- **Season-aware show tracking.** Finish a season and choose to start the next one, mark the show as waiting for a future season, or finish it entirely. Each completed season appears individually in the finished ribbon with its own tag.
+- Stats correctly distinguish **shows finished** (fully complete) from **seasons watched**.
+
+### Habit tracking
+- **Combined reading + listening heatmap** — a GitHub-style calendar where amber marks reading days, indigo marks listening days, and green marks both. Hover any day for a rich tooltip showing what you read (with page ranges), whether you listened, and a preview of that day's diary entry. Hover a month label to highlight just that month.
+- **Streak counters** for reading and listening, with all-time bests.
+- **Milestone celebrations** at streak and book-count thresholds.
+
+### Motivation
+- **Road to Fluency bar** with a pixel fox that reacts to your streak:
+  - 😴 **Sleeping** — nothing logged today
+  - 🏃 **Running** — 1–6 day streak
+  - ⭐ **Happy** — 7–29 day streak
+  - 🔥 **On fire** — 30+ day streak
+- **Reading Bingo** — a yearly 5×5 card with auto-detected and manually-ticked squares. Fully customisable: rename squares, hide ones you don't want, and add your own.
+
+### Reflection
+- **Study diary** — a notebook view of dated entries, newest first, grouped by month, with tags and full-text search.
+- **Year in Review** — a generated, downloadable PNG poster summarising your year: books, pages, hours, reading and listening days, shows, seasons, your reading goal, your favourites, and a grid of every book you finished. Generate it for any year at any time. On **January 1st**, the previous year's review automatically pops up.
+
+### WaniKani integration
+- Optional sync with the [WaniKani](https://www.wanikani.com/) API to pull in your level, available reviews and lessons, SRS stage breakdown, and kanji progress.
+
+### Layout & data
+- **Modular panels** — every section is a draggable, hideable panel. Arrange your dashboard however you like; the layout persists.
+- **Dark and light themes.**
+- **Export / import** your data as a JSON backup, plus a recovery tool for restoring data from an older version of the file.
+
+---
+
+## 🚀 Getting started
+
+1. Download `japanese-studies.html`.
+2. Open it in any modern browser (Chrome, Firefox, Safari, Edge).
+3. Start adding books, shows, and diary entries.
+
+That's it. There's no installation, no dependencies to fetch, and no internet connection required (except for optional WaniKani sync and fetching cover images).
+
+### Optional: WaniKani sync
+1. Get a personal access token from your [WaniKani API settings](https://www.wanikani.com/settings/personal_access_tokens).
+2. Paste it into the WaniKani panel and click sync.
+
+---
+
+## 📓 Using it inside Obsidian (Surfing plugin)
+
+If you keep your study notes in [Obsidian](https://obsidian.md/), you can open the dashboard right inside your vault using the [Surfing](https://github.com/PKM-er/Obsidian-Surfing) community plugin, which adds a built-in web browser to Obsidian. This keeps your tracker and your notes in one place.
+
+### One-time setup
+
+1. **Install Surfing.** In Obsidian, go to **Settings → Community plugins → Browse**, search for **Surfing**, install it, and enable it. (You may need to turn off Restricted Mode first.)
+2. **Put the dashboard in your vault.** Copy `japanese-studies.html` into a folder inside your Obsidian vault — for example `Japanese dashboard/japanese-studies.html`. Keeping it inside the vault means the file path stays stable, which matters for your data (see below).
+3. **Open it in Surfing.** Open the Surfing browser (command palette → **Surfing: Open current URL with Surfing** or the ribbon icon), then navigate to the file using a `file://` URL pointing at the HTML, e.g.:
    ```
-   file:///Users/yourname/Documents/MyVault/index.html
+   file:///Users/you/Documents/MyVault/Japanese dashboard/japanese-studies.html
    ```
-7. Press Enter — the dashboard opens as a tab inside Obsidian
+   On Windows the path looks like `file:///C:/Users/you/...`.
+4. **Bookmark / pin it.** Use Surfing's bookmark feature, or pin the tab, so it's one click away each time you open Obsidian.
 
-**Finding your file path on Mac:** Hold **Option** and right-click the file in Finder → **Copy as Pathname**, then add `file://` at the start.
+### Tips
 
-### Option C — GitHub Pages (shareable link)
+- **Keep the file path stable.** Your data is stored by the browser against the exact file path. If you move or rename the file (or the vault folder), the dashboard will look empty because the browser treats the new path as a new site. Your data isn't lost — move the file back, or restore from an export. Decide on a location once and leave it there.
+- **Back up before reorganising your vault.** Before moving folders around, use **Settings → Export** in the dashboard to save a JSON backup, then **Import** it after if needed.
+- **Pin the tab** so an accidental close doesn't lose your place.
+- The dashboard behaves the same inside Surfing as in a normal browser — themes, WaniKani sync, and all panels work identically.
 
-1. Fork this repository
-2. Go to **Settings → Pages**
-3. Under **Branch**, select `main` and keep the folder as `/ (root)`
-4. Click **Save** — your dashboard will be live at `https://yourusername.github.io/repository-name` within a minute
-
-Each person who opens the link gets their own completely independent copy. Data never mixes between users.
-
----
-
-## WaniKani Sync
-
-The sync bar at the top connects the dashboard to your WaniKani account.
-
-**To connect:**
-
-1. Go to [wanikani.com](https://wanikani.com) and log in
-2. Click your profile picture → **Settings → Personal Access Tokens**
-3. Click **Generate a new token**, give it any name, read-only permissions are fine
-4. Copy the token
-5. Paste it into the **WaniKani API Key** field in the dashboard
-6. Click **⚡ Sync WaniKani**
-
-Your API key is saved locally and reloads automatically — you only need to paste it once. Sync takes 10–30 seconds. Click the button any time to refresh your stats.
+> Plugin menus and option names can change between Surfing versions; if something is named slightly differently, look for the equivalent "open URL" or "bookmark" action.
 
 ---
 
-## Reading & Listening Streaks
+## 💾 How your data works
 
-Two separate cards track your daily reading and listening habits across the full year.
+All data is stored in your browser's `localStorage` under the key `jp-v10`. This means:
 
-### Logging a day
-
-Click any cell in the heatmap to mark it as done — amber for reading, indigo for listening. Click again to unmark it. Today's cell has a white outline border.
-
-### Yearly heatmap
-
-Each card shows a full GitHub-style heatmap of the entire year, with month labels across the top and Mon / Wed / Fri labels on the left. Navigate to previous years using the **‹** and **›** arrows — only years with logged data appear.
-
-### Yearly summary
-
-Each card shows **X / Y days this year** — how many days you logged out of how many days have elapsed so far. For past years, Y is the full 365 (or 366 for leap years).
-
-### Weekly goal
-
-Set a target number of days per week using the **Goal** input on each card. A progress bar fills as you tick off days during the week and resets each Monday.
-
-### Streak count
-
-Your current streak and all-time best are shown at the top of each card. Missing a day resets the current streak to zero.
+- **Your data never leaves your computer.** There is no server and no telemetry.
+- **The HTML file itself contains no personal data** — you can safely share the file with others, and they'll get a clean, empty dashboard.
+- **Data is tied to the file's exact location.** Because browsers scope `localStorage` for local files to the full file path, renaming or moving the file makes the browser treat it as a new origin, and your data will appear to be gone. It isn't deleted — keep the file at a stable path, or use **Settings → Recover** to restore it.
+- **Back up regularly.** Use **Settings → Export** to save a JSON backup, especially before moving the file or switching devices.
 
 ---
 
-## Currently Reading
+## 🔒 Privacy
 
-A horizontal scrollable shelf of books you are currently reading.
-
-### Adding a book
-
-Click **+ Add book** to open the modal.
-
-- **Title** — type the title, or leave blank and use Look up to auto-fill it
-- **Cover Image** — two options:
-  - Type an ISBN (e.g. `9784088745466`) or ASIN (e.g. `B00FXZP3LA`) and click **Look up** — the title and total page count fill in automatically
-  - Click **📁 Upload image from computer** to pick an image from your device — this is the most reliable method and stores the image locally so it always displays
-- **Type** — Manga, Novel, Light Novel, Non-fiction, or Children's Book
-- **Difficulty** — 1 (Very Easy) to 5 (Very Hard)
-- **Progress** — current page and total pages (auto-filled on ISBN lookup)
-- **Start Date** — defaults to today, change it to whenever you actually started
-
-### Progress bar
-
-If you enter a total page count, a purple progress bar appears along the bottom of the cover image with a percentage badge, plus a page counter and days-reading count below the title.
-
-### Editing a book
-
-Click anywhere on a book card (not the Finished button) to open the edit modal and update any field, including your current page to track progress.
-
-### Finishing a book
-
-Click **✓ Finished**. The book moves automatically to the Books Read ribbon with today's date recorded as the finish date, and the number of days it took is calculated from your start date.
-
-### A note on covers
-
-Obsidian blocks loading images from external websites. The most reliable method is:
-
-1. Find the book on Amazon or the publisher's site
-2. Right-click the cover image → **Save Image**
-3. In the Add or Edit modal, click **📁 Upload image from computer**
-4. Select the saved image
-
-The image is stored locally and always displays correctly, even offline. ISBNs still auto-fill the title and page count even if the cover does not load.
+- No accounts, no tracking, no analytics.
+- The only outbound network requests are:
+  - WaniKani API calls, if you choose to sync (sends only your API token to WaniKani).
+  - Loading book/show cover images from URLs you provide.
+- Everything else is fully local.
 
 ---
 
-## Books Read
+## 🛠️ Technical notes
 
-A scrollable ribbon of all the books you have finished, organised by year.
-
-Click the year tabs to switch between years. Each book shows its finish date and how many days it took to read. Books are added here automatically when you tap **✓ Finished**.
-
----
-
-## Study Diary
-
-A compact calendar sits next to the Currently Reading section. Dates with notes are highlighted in purple with a dot.
-
-### Writing a note
-
-Click any date to open the full-page note editor. Write freeform notes — what you studied, new vocabulary, grammar points, how the session felt.
-
-To embed a YouTube video or image, paste a URL into the **Embed URL** field and click **+ Add**. YouTube links convert to embedded players automatically.
-
-Click **Save** to save and return, **← Back** to go back without saving, or **Delete** to remove a note entirely. Press **Escape** at any time to close.
-
-### Searching notes
-
-Click the **🔍 Search** button on the diary card to search all your notes. Results appear instantly as you type, with highlighted matching snippets. Click any result to jump directly to that date.
+- **Single file.** All HTML, CSS, and JavaScript live in `japanese-studies.html`. No frameworks, no build tooling.
+- **Vanilla JavaScript.** The only external dependency is Chart.js, loaded from a CDN for the optional yearly-review charts.
+- **Canvas rendering** is used for the pixel fox and the Year in Review poster.
+- Works offline once loaded.
 
 ---
 
-## WaniKani Stats
+## 🤝 Contributing
 
-Three cards at the bottom show your WaniKani data after syncing.
-
-**WaniKani** — current level, reviews available right now, and lessons available right now. Last synced time shown at the bottom.
-
-**SRS Breakdown** — items at each stage: Apprentice, Guru, Master, Enlightened, and Burned.
-
-**WK Kanji Progress** — a circular ring showing what percentage of WaniKani's 2,027 kanji you have at Guru level or above. Shows known, remaining, and total counts with a progress bar.
+This is a personal-style project shared for others to use and adapt. Feel free to fork it, customise the bingo squares, tweak the fox, change the colour scheme, or add panels of your own. Because it's a single file with no build step, editing is as simple as opening the HTML in a text editor.
 
 ---
 
-## Your Data
+## 📄 License
 
-**Where it is stored** — everything saves in your browser's local storage. It stays on your device and is never sent anywhere.
-
-**Each person's data is independent** — anyone you share this with gets a blank dashboard. Your data and theirs never mix.
-
-**Backup** — your data is tied to the browser and device you use. Clearing browser data or switching devices will lose your data. Use the dashboard consistently on the same device to avoid this.
-
-**Resetting** — click the **✏️** button (bottom right) to open the manual override panel, scroll to the bottom, and click **⚠️ Reset All Data**. This cannot be undone.
-
-**Manual override** — the ✏️ panel also lets you set WaniKani stats manually if you prefer not to use the API sync.
+Released under the MIT License — free to use, modify, and share.
 
 ---
 
-## Sharing with Others
-
-Because all data is stored locally per device, you can share `index.html` freely. Anyone who opens it gets a blank dashboard with no connection to your data.
-
-The easiest ways to share:
-
-- **Send the file directly** via email or message
-- **GitHub Pages** — fork this repo, enable Pages, and share the URL
-- **Netlify Drop** — drag the file to [app.netlify.com/drop](https://app.netlify.com/drop) and share the instant URL
-
----
-
-*Built as a single HTML file. No server, no account, no tracking.*
+*Happy reading! 📖 頑張って！*
